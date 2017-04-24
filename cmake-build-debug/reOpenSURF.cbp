@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="reOpenSURF"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\usr\;CMake Files\..\..\..\..\usr\local\;CMake Files\..\..\..\..\usr\local\share\;CMake Files\..\..\..\..\usr\local\share\OpenCV\;CMake Files\..\..\..\..\usr\local\lib\;CMake Files\..\..\..\..\usr\local\lib\cmake\;CMake Files\..\..\..\..\usr\local\lib\cmake\dlib\;CMake Files\..\..\..\..\usr\local\include\;CMake Files\..\..\..\..\usr\local\include\dlib\;CMake Files\..\..\..\..\usr\local\include\dlib\cmake_utils\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/apletea/work/reOpenSURF/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/apletea/work/reOpenSURF/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/apletea/work/reOpenSURF/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="reOpenSURF">
+				<Option output="/home/apletea/work/reOpenSURF/cmake-build-debug/reOpenSURF" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/apletea/work/reOpenSURF/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/local/include/opencv"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 reOpenSURF"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="reOpenSURF/fast">
+				<Option output="/home/apletea/work/reOpenSURF/cmake-build-debug/reOpenSURF" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/apletea/work/reOpenSURF/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/local/include/opencv"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 reOpenSURF/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/apletea/work/reOpenSURF/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/apletea/work/reOpenSURF/main.cpp">
+			<Option target="reOpenSURF"/>
+		</Unit>
+		<Unit filename="/home/apletea/work/reOpenSURF/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/apletea/work/reOpenSURF/../../../../usr/local/share/OpenCV/OpenCVConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
+		</Unit>
+		<Unit filename="/home/apletea/work/reOpenSURF/../../../../usr/local/share/OpenCV/OpenCVConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
+		</Unit>
+		<Unit filename="/home/apletea/work/reOpenSURF/../../../../usr/local/share/OpenCV/OpenCVModules.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
+		</Unit>
+		<Unit filename="/home/apletea/work/reOpenSURF/../../../../usr/local/share/OpenCV/OpenCVModules-release.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
+		</Unit>
+		<Unit filename="/home/apletea/work/reOpenSURF/../../../../usr/local/lib/cmake/dlib/dlibConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\dlib\"/>
+		</Unit>
+		<Unit filename="/home/apletea/work/reOpenSURF/../../../../usr/local/lib/cmake/dlib/dlibConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\dlib\"/>
+		</Unit>
+		<Unit filename="/home/apletea/work/reOpenSURF/../../../../usr/local/lib/cmake/dlib/dlib.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\dlib\"/>
+		</Unit>
+		<Unit filename="/home/apletea/work/reOpenSURF/../../../../usr/local/lib/cmake/dlib/dlib-release.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\dlib\"/>
+		</Unit>
+		<Unit filename="/home/apletea/work/reOpenSURF/../../../../usr/local/include/dlib/cmake_utils/use_cpp_11.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\include\dlib\cmake_utils\"/>
+		</Unit>
+		<Unit filename="/home/apletea/work/reOpenSURF/../../../../usr/local/include/dlib/cmake_utils/add_global_compiler_switch.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\include\dlib\cmake_utils\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

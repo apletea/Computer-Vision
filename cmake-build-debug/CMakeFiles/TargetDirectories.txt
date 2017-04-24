@@ -1,0 +1,3 @@
+/home/apletea/work/reOpenSURF/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/apletea/work/reOpenSURF/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/apletea/work/reOpenSURF/cmake-build-debug/CMakeFiles/reOpenSURF.dir
