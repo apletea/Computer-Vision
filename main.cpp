@@ -115,6 +115,29 @@ void procesShit(Mat & img_1, Mat & img_2, std::vector<KeyPoint> & keypoints_1, M
 
 }
 
+void matchingKeyPoints( vector<KeyPoint> & ans, Mat & descriptor1, Mat & descriptor2,vector<KeyPoint> & current){
+    FlannBasedMatcher matcher;
+    vector<DMatch> matches;
+    matcher.match(descriptor1,descriptor2,matches);
+    double max_dist = 0; double min_dist = 100;
+
+    for( int i = 0; i < descriptor1.rows; i++ )
+    { double dist = matches[i].distance;
+        if( dist < min_dist ) min_dist = dist;
+        if( dist > max_dist ) max_dist = dist;
+    }
+
+    std::vector< DMatch > good_matches;
+    for( int i = 0; i < descriptor1.rows; i++ )
+    { if( matches[i].distance <= max(2*min_dist, 0.02) )
+        { good_matches.push_back( matches[i]); }
+    }
+    for (int i = 0; i < good_matches.size(); ++i){
+        ans.push_back(current[good_matches[i].queryIdx]);
+    }
+
+}
+
 int main(){
     try {
         cv::VideoCapture capWebcam(0);
@@ -131,14 +154,29 @@ int main(){
         std::vector<KeyPoint>  keypoints1;
 
 
-
         cv::Ptr<cv::xfeatures2d::SURF> detector = cv::xfeatures2d::SURF::create();
         int i =100;
-        `
+
 
         detector->detect(imgWithPoints2,keypoints1);
         Mat descriptor;
         detector->detectAndCompute(imgWithPoints2,Mat(),keypoints1,descriptor);
+
+        for (int i = 0; i  < 15; ++i){
+            Mat tmp,imgToProcces;
+            capWebcam.read(tmp);
+            cv::cvtColor(tmp, imgToProcces, CV_BGR2GRAY);
+            Mat descriptorTMP;
+            vector<KeyPoint> KPtoProcces;
+            detector->detect(imgToProcces, KPtoProcces);
+            detector->detectAndCompute(imgToProcces, Mat(),KPtoProcces,descriptorTMP);
+            vector<KeyPoint> newKp;
+            matchingKeyPoints(newKp, descriptor,descriptorTMP,keypoints1);
+            keypoints1 = newKp;
+            Mat tmpDsc;
+            detector->detectAndCompute(imgToProcces,Mat(),keypoints1,tmpDsc);
+            descriptor = tmpDsc;
+        }
 
         while (true){
             capWebcam.read(currentImage);
