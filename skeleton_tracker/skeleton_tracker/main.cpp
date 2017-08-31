@@ -8,7 +8,7 @@ int main()
 {
     std::cout << "Hello World!" << std::endl;
     cv::Mat img;
-    img = cv::imread("/home/davinci/Pictures/Screenshot.png", CV_LOAD_IMAGE_COLOR);
+    img = cv::imread("/home/davinci/Pictures/Screenshot.png", CV_LOAD_IMAGE_GRAYSCALE);
     cv::imshow("window", img);
     cv::waitKey();
     return 0;

@@ -6,5 +6,9 @@ CONFIG -= qt
 CONFIG += link_pkgconfig
 PKGCONFIG += opencv
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    point_finder.cpp
+
+HEADERS += \
+    point_finder.h
 
