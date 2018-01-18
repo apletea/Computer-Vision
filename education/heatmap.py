@@ -145,31 +145,39 @@ def train():
 def visualize_class_activation_map(model, original_img):
     width, height, _ = original_img.shape
 
-    # Reshape to the network input shape (3, w, h).
     img = np.array([original_img])
 
-    # Get the 512 input weights to the softmax.
     class_weights = model.layers[-1].get_weights()[0]
-    final_conv_layer = get_output_layer(model, "conv5_3")
+    final_conv_layer = get_output_layer(model, "conv1_2")
     get_output = K.function([model.layers[0].input], [final_conv_layer.output, model.layers[-1].output])
     [conv_outputs, predictions] = get_output([img])
     conv_outputs = conv_outputs[0, :, :, :]
 
     # Create the class activation map.
-    cam = np.zeros(dtype=np.float32, shape=conv_outputs.shape[1:3])
-    for i, w in enumerate(class_weights[:, 1]):
+    print conv_outputs.shape
+    conv_outputs = np.array(np.transpose(np.float32(conv_outputs), (2, 0, 1)))
+    cam = np.zeros(dtype=np.float32, shape=conv_outputs[0].shape)
+    print cam.shape
+    print conv_outputs.shape
+    for i, w in enumerate(class_weights[:, 0]):
+        # arr = conv_outputs[i, :, :]
+        # # print len(arr[:])
+        # # for line in arr[:]:
+        # #     print line*w
+        # print w
+        # print arr
         if (i >= 87):
             continue
-        cam += w * conv_outputs[i, :, :]
-    print "predictions", predictions
+        print w*conv_outputs[i,:,:]
+        cam +=w*conv_outputs[i, :, :]
+    print "predictions", predictions[0][0]
     cam /= np.max(cam)
     cam = cv2.resize(cam, (height, width))
     heatmap = cv2.applyColorMap(np.uint8(255 * cam), cv2.COLORMAP_JET)
     # heatmap[np.where(cam < 0.2)] = 0
     # print heatmap
     img = heatmap * 0.5 + original_img
-    print img[0]
-    cv2.addWeighted(original_img,0.7,heatmap,0.3,img)
+    img = cv2.addWeighted(original_img,0.8,heatmap,0.2,0)
 
     return img,heatmap
 
@@ -185,3 +193,4 @@ while True:
     cv2.imshow('map',img2)
     cv2.imshow('heatmap',he)
     cv2.waitKey(5)
+
