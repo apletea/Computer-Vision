@@ -1,143 +1,187 @@
-from keras.applications.vgg16 import (
-    VGG16, preprocess_input, decode_predictions)
-from keras.preprocessing import image
-from keras.layers.core import Lambda
-from keras.models import Sequential
-from tensorflow.python.framework import ops
-import keras.backend as K
-import tensorflow as tf
-import numpy as np
+import pandas as pd
 import keras
-import sys
 import cv2
+from tqdm import tqdm
+import cv2
+import glob
+import os
+import numpy as np
+from keras.utils.np_utils import to_categorical
+from tensorflow.python.framework import ops
+from keras.layers import *
+from keras.models import *
+from keras.applications import *
+from keras.optimizers import *
+from keras.regularizers import *
+from keras.applications.inception_v3 import preprocess_input
+from keras.callbacks import ModelCheckpoint
+from sklearn.model_selection import StratifiedKFold
 
-def target_category_loss(x, category_index, nb_classes):
-    return tf.multiply(x, K.one_hot([category_index], nb_classes))
+def global_average_pooling(x):
+    return K.mean(x, axis = (2, 3))
 
-def target_category_loss_output_shape(input_shape):
-    return input_shape
+def global_average_pooling_shape(input_shape):
+    return input_shape[0:2]
 
-def normalize(x):
-    # utility function to normalize a tensor by its L2 norm
-    return x / (K.sqrt(K.mean(K.square(x))) + 1e-5)
 
-def load_image(path):
-    img_path = sys.argv[1]
-    img = image.load_img(img_path, target_size=(224, 224))
-    x = image.img_to_array(img)
-    x = np.expand_dims(x, axis=0)
-    x = preprocess_input(x)
-    return x
+from keras.models import Sequential
+from keras.layers import Convolution2D, ZeroPadding2D, MaxPooling2D
+from keras.layers.core import Flatten, Dense, Dropout, Lambda
+from keras import backend as K
+import h5py
+from keras.optimizers import SGD
 
-def register_gradient():
-    if "GuidedBackProp" not in ops._gradient_registry._registry:
-        @ops.RegisterGradient("GuidedBackProp")
-        def _GuidedBackProp(op, grad):
-            dtype = op.inputs[0].dtype
-            return grad * tf.cast(grad > 0., dtype) * \
-                tf.cast(op.inputs[0] > 0., dtype)
 
-def compile_saliency_function(model, activation_layer='block5_conv3'):
-    input_img = model.input
-    layer_dict = dict([(layer.name, layer) for layer in model.layers[1:]])
-    layer_output = layer_dict[activation_layer].output
-    max_output = K.max(layer_output, axis=3)
-    saliency = K.gradients(K.sum(max_output), input_img)[0]
-    return K.function([input_img, K.learning_phase()], [saliency])
+def global_average_pooling(x):
+    return K.mean(x, axis=(2, 3))
 
-def modify_backprop(model, name):
-    g = tf.get_default_graph()
-    with g.gradient_override_map({'Relu': name}):
 
-        # get layers that have an activation
-        layer_dict = [layer for layer in model.layers[1:]
-                      if hasattr(layer, 'activation')]
+def global_average_pooling_shape(input_shape):
+    return input_shape[0:2]
 
-        # replace relu activation
-        for layer in layer_dict:
-            if layer.activation == keras.activations.relu:
-                layer.activation = tf.nn.relu
 
-        # re-instanciate a new model
-        new_model = VGG16(weights='imagenet')
-    return new_model
-
-def deprocess_image(x):
-    '''
-    Same normalization as in:
-    https://github.com/fchollet/keras/blob/master/examples/conv_filter_visualization.py
-    '''
-    if np.ndim(x) > 3:
-        x = np.squeeze(x)
-    # normalize tensor: center on 0., ensure std is 0.1
-    x -= x.mean()
-    x /= (x.std() + 1e-5)
-    x *= 0.1
-
-    # clip to [0, 1]
-    x += 0.5
-    x = np.clip(x, 0, 1)
-
-    # convert to RGB array
-    x *= 255
-    if K.image_dim_ordering() == 'th':
-        x = x.transpose((1, 2, 0))
-    x = np.clip(x, 0, 255).astype('uint8')
-    return x
-
-def grad_cam(input_model, image, category_index, layer_name):
+def VGG16_convolutions():
     model = Sequential()
-    model.add(input_model)
+    model.add(ZeroPadding2D((1, 1), input_shape=( None, None, 3)))
+    model.add(Convolution2D(96, 11, 11, activation='relu', name='conv1_1'))
+    model.add(MaxPooling2D((3, 3), strides=(2, 2)))
 
-    nb_classes = 1000
-    target_layer = lambda x: target_category_loss(x, category_index, nb_classes)
-    model.add(Lambda(target_layer,
-                     output_shape = target_category_loss_output_shape))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Convolution2D(128, 5, 5, activation='relu', name='conv1_2'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Convolution2D(128, 5, 5, activation='relu', name='conv2_1'))
+    model.add(MaxPooling2D((3, 3), strides=(2, 2)))
 
-    loss = K.sum(model.layers[-1].output)
-    conv_output =  [l for l in model.layers[0].layers if l.name is layer_name][0].output
-    grads = normalize(K.gradients(loss, conv_output)[0])
-    gradient_function = K.function([model.layers[0].input], [conv_output, grads])
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Convolution2D(384, 3, 3, activation='relu', name='conv4_2'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Convolution2D(192, 3, 3, activation='relu', name='conv4_3'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Convolution2D(192, 3, 3, activation='relu', name='conv5_1'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Convolution2D(128, 3, 3, activation='relu', name='conv5_2'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Convolution2D(128, 3, 3, activation='relu', name='conv5_3_1'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2), name="conv5_3"))
+    return model
 
-    output, grads_val = gradient_function([image])
-    output, grads_val = output[0, :], grads_val[0, :, :, :]
 
-    weights = np.mean(grads_val, axis = (0, 1))
-    cam = np.ones(output.shape[0 : 2], dtype = np.float32)
+def get_model():
+    model = VGG16_convolutions()
+    # model = load_model_weights(model, "./tmp/weights.hdf5")
+    # model.add(Lambda(global_average_pooling,
+    #                  output_shape=global_average_pooling_shape))
+    model.add(GlobalAveragePooling2D())
+    model.add(Dense(2, activation='softmax'))
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['binary_accuracy'])
+    return model
 
-    for i, w in enumerate(weights):
-        cam += w * output[:, :, i]
 
-    cam = cv2.resize(cam, (224, 224))
-    cam = np.maximum(cam, 0)
-    heatmap = cam / np.max(cam)
+def load_model_weights(model, weights_path):
+    print 'Loading model.'
+    f = h5py.File(weights_path)
+    for k in range(f.attrs['nb_layers']):
+        if k >= len(model.layers):
+            # we don't look at the last (fully-connected) layers in the savefile
+            break
+        g = f['layer_{}'.format(k)]
+        weights = [g['param_{}'.format(p)] for p in range(g.attrs['nb_params'])]
+        model.layers[k].set_weights(weights)
+        model.layers[k].trainable = False
+    f.close()
+    print 'Model loaded.'
+    return model
 
-    #Return to BGR [0..255] from the preprocessed image
-    image = image[0, :]
-    image -= np.min(image)
-    image = np.minimum(image, 255)
 
-    cam = cv2.applyColorMap(np.uint8(255*heatmap), cv2.COLORMAP_JET)
-    cam = np.float32(cam) + np.float32(image)
-    cam = 255 * cam / np.max(cam)
-    return np.uint8(cam), heatmap
+def get_output_layer(model, layer_name):
+    # get the symbolic outputs of each "key" layer (we gave them unique names).
+    layer_dict = dict([(layer.name, layer) for layer in model.layers])
+    layer = layer_dict[layer_name]
+    return layer
 
-preprocessed_input = load_image(sys.argv[1])
+# def load_inria_person():
+#     data = pd.read_csv('copter_trainval.txt',header=None,sep=' ')
+#     y = []
+#     x = []
+#     pos
+#     for i in tqdm(xrange(0,len(data))):
+#         img = cv2.imread('./JPEGImages/{}.jpg'.format(data[0][i]))
+#         x.append(cv2.resize(img,(300,300)))
+#         y.append([data[1][i]^1,data[1][i]&1])
+#     print y
+#     x = np.array(x,np.float32)/255
+#     y = np.array(y,np.uint8)
+#     return x,y
 
-model = VGG16(weights='imagenet')
 
-predictions = model.predict(preprocessed_input)
-top_1 = decode_predictions(predictions)[0][0]
-print('Predicted class:')
-print('%s (%s) with probability %.2f' % (top_1[1], top_1[0], top_1[2]))
+def load_inria_person():
+    pos_data =  pd.read_csv('pos_ex.txt',header=None,sep=' ')
+    neg_data =  pd.read_csv('neg_ex.txt',header=None,sep=' ')
+    pos_images = []
+    neg_images = []
+    for i in tqdm(xrange(0,len(pos_data))):
+        img = cv2.imread('./JPEGImages/{}.jpg'.format(pos_data[0][i]))
+        pos_images.append(cv2.resize(img,(300,300)))
+    for i in tqdm(xrange(0, len(neg_images))):
+        img = cv2.imread('./JPEGImages/{}.jpg'.format(neg_data[0][i]))
+        neg_images.append(cv2.resize(img, (300, 300)))
+    pos_images = [np.transpose(img, (2, 0, 1)) for img in pos_images]
+    neg_images = [np.transpose(img, (2, 0, 1)) for img in neg_images]
+    y = [1] * len(pos_images) + [0] * len(neg_images)
+    y = to_categorical(y, 2)
+    X = np.float32(pos_images + neg_images)
+    return X, y
 
-predicted_class = np.argmax(predictions)
-cam, heatmap = grad_cam(model, preprocessed_input, predicted_class, "block5_conv3")
-cv2.imwrite("gradcam.jpg", cam)
+def train():
+    model = get_model()
+    X, y = load_inria_person()
+    print "Training.."
+    checkpoint_path = "./tmp/weights.hdf5"
+    checkpoint = ModelCheckpoint(checkpoint_path, monitor='val_loss', verbose=0, period=1)
+    model.fit(X, y, nb_epoch=40, batch_size=32, validation_split=0.2, verbose=1, callbacks=[checkpoint])
+    model.save('./tmp/model.hdf5')
 
-register_gradient()
-guided_model = modify_backprop(model, 'GuidedBackProp')
-saliency_fn = compile_saliency_function(guided_model)
-saliency = saliency_fn([preprocessed_input, 0])
-gradcam = saliency[0] * heatmap[..., np.newaxis]
-cv2.imwrite("guided_gradcam.jpg", deprocess_image(gradcam))
+
+def visualize_class_activation_map(model, original_img):
+    width, height, _ = original_img.shape
+
+    # Reshape to the network input shape (3, w, h).
+    img = np.array([original_img])
+
+    # Get the 512 input weights to the softmax.
+    class_weights = model.layers[-1].get_weights()[0]
+    final_conv_layer = get_output_layer(model, "conv5_3")
+    get_output = K.function([model.layers[0].input], [final_conv_layer.output, model.layers[-1].output])
+    [conv_outputs, predictions] = get_output([img])
+    conv_outputs = conv_outputs[0, :, :, :]
+
+    # Create the class activation map.
+    cam = np.zeros(dtype=np.float32, shape=conv_outputs.shape[1:3])
+    for i, w in enumerate(class_weights[:, 1]):
+        if (i >= 87):
+            continue
+        cam += w * conv_outputs[i, :, :]
+    print "predictions", predictions
+    cam /= np.max(cam)
+    cam = cv2.resize(cam, (height, width))
+    heatmap = cv2.applyColorMap(np.uint8(255 * cam), cv2.COLORMAP_JET)
+    # heatmap[np.where(cam < 0.2)] = 0
+    # print heatmap
+    img = heatmap * 0.5 + original_img
+    print img[0]
+    cv2.addWeighted(original_img,0.7,heatmap,0.3,img)
+
+    return img,heatmap
+
+# train()
+
+
+vc = cv2.VideoCapture('/home/please/work/_Video/ULTIMATE.mp4')
+model = load_model('./tmp/model.hdf5')
+while True:
+    _, img = vc.read()
+    img2,he = visualize_class_activation_map(model,img)
+    cv2.imshow('or',img)
+    cv2.imshow('map',img2)
+    cv2.imshow('heatmap',he)
+    cv2.waitKey(5)
