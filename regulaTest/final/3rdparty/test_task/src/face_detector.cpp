@@ -4,17 +4,24 @@
 #include <iostream>
 #include <vector>
 #include <opencv2/opencv.hpp>
+#include <fstream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
+namespace pt = boost::property_tree;
+
+#define RESULT_JSON "result.json"
 
 
 void proccesImg(const std::string & imgName, const std::string & folder)
 {
     std::string imgPath = folder + imgName;
     cv::Mat img = cv::imread(imgPath);
-
     ThreadPool pool(4);
     auto result = pool.enqueue(detectFaces,imgPath);
     auto boxes = result.get();
 
+    pt::ptree tree;
 
     for (int i = 0; i < boxes.size(); i+=3)
     {
@@ -25,7 +32,16 @@ void proccesImg(const std::string & imgName, const std::string & folder)
         cv::Mat flipedFace;
         cv::flip(faceROI,flipedFace,1);
         cv::imwrite(folder + faceImgName,flipedFace);
+        pt::ptree tmp;
+        tmp.put("name",faceImgName);
+        tmp.put("x",boxes[i][0].x);
+        tmp.put("y",boxes[i][0].y);
+        tmp.put("width",boxes[i][0].width);
+        tmp.put("height",boxes[i][0].height);
+        tree.add_child("face"+std::to_string(i),tmp);
     }
+    std::ofstream out(folder + RESULT_JSON);
+    pt::write_json(out, tree);
 
 }
 
@@ -49,7 +65,6 @@ std::vector<std::vector<cv::Rect>> detectFaces(const std::string & imgPath)
     {
         std::cout << "Found " << ans.size()/3 << " faces in file: " << imgPath << std::endl;
     }
-    ans[1][0].width
     return ans;
 }
 
@@ -89,10 +104,6 @@ void clearAns(std::vector<std::vector<cv::Rect>> & ans)
     ans.resize(ansSize*3);
 }
 
-void saveToJson(std::vector<std::string>, std::string folderPath)
-{
-
-}
 
 
 

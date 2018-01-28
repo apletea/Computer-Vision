@@ -7,8 +7,7 @@
 void proccesImg(const std::string & imgName, const std::string & folder);
 void findEyesAndMouth(const cv::Mat & grayImg, const std::vector<cv::Rect> & faces,std::vector<std::vector<cv::Rect>> & ans);
 void clearAns(std::vector<std::vector<cv::Rect>> & ans);
-void saveToJson(std::vector<std::string>, std::string folderPath);
-std::vector<std::vector<cv::Rect>> detectFaces(cv::Mat img);
+std::vector<std::vector<cv::Rect>> detectFaces(const std::string & imgPath);
 
 #if defined(linux) || defined(__linux) || defined(__linux__)
 cv::CascadeClassifier faceDetect("./data/haarcascade_frontalface_default.xml");

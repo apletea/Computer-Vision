@@ -1,0 +1,3 @@
+/home/davinci/CLionProjects/final/3rdparty/test_task/build/CMakeFiles/rebuild_cache.dir
+/home/davinci/CLionProjects/final/3rdparty/test_task/build/CMakeFiles/edit_cache.dir
+/home/davinci/CLionProjects/final/3rdparty/test_task/build/CMakeFiles/test_task.dir
