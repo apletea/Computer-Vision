@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4)
-project(final C CXX)
+project(final2C CXX)
 set(CMAKE_CXX_STANDARD 11)
 
 set(Boost_INCLUDE_DIR /home/davinci/work/boost_1_61_0)
@@ -21,7 +21,7 @@ find_package(Boost COMPONENTS system filesystem REQUIRED)
 find_package(OpenCV REQUIRED)
 
 
-add_executable(final main.cpp)
+add_executable(final2 main.cpp)
 
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${OpenCV_INCLUDE_DIRS})
@@ -29,7 +29,7 @@ include_directories(${Detector_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIR})
 link_directories(${test_task})
 link_directories($test_task_include)
-target_link_libraries( final ${OpenCV_LIBS} )
-target_link_libraries( final ${Boost_LIBRARIES} )
-target_link_libraries( final ${Detector})
-TARGET_LINK_LIBRARIES(final pthread)
+target_link_libraries( final2 ${OpenCV_LIBS} )
+target_link_libraries( final2 ${Boost_LIBRARIES} )
+target_link_libraries( final2 ${Detector})
+TARGET_LINK_LIBRARIES(final2 pthread)
