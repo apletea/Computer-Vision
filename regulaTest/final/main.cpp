@@ -13,7 +13,7 @@ void proccesFolder(const bf::path & p,const int & workers)
         if (bf::is_directory(dirItr->status()))
             proccesFolder(dirItr->path(), workers);
         else {
-            proccesImg(dirItr->path().filename().string(),dirItr->path().string());
+            proccesImg(dirItr->path().filename().string(),p.string()+"/");
         }
 
     }
@@ -21,12 +21,11 @@ void proccesFolder(const bf::path & p,const int & workers)
 
 int main(int argc, char ** argv)
 {
-    std::string pathFolder = argv[2];
+    std::string pathFolder = argv[1];
     int workers = 4;
     if (argc == 3)
-        workers = std::stoi(argv[3]);
+        workers = std::stoi(argv[2]);
     bf::path p(pathFolder);
     proccesFolder(p,workers);
-    std::cout << "Hello, World!" << std::endl;
     return 0;
 }
