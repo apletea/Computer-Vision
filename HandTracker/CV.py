@@ -1,14 +1,14 @@
 import cv2
 import numpy as np
 import pandas as pd
-import model
+#import model
 import math
 
 vc = cv2.VideoCapture(0)
 cv2.namedWindow('img',0)
 labels = pd.read_csv('labels.txt')
-model = model.get_model_final(len(labels['class']),128)
-model.load_weights('weights2.hdf5')
+#model = model.get_model_final(len(labels['class']),128)
+#model.load_weights('weights2.hdf5')
 
 def peer2(img):
     b, g, r = cv2.split(img)
