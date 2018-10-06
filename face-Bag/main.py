@@ -61,7 +61,7 @@ def apply_mask(image, mask, color, alpha=0.5):
     return image
 
 parser = argparse.ArgumentParser(description='set input arguments')
-parser.add_argument('-input_img', action='store', dest='input_img', type=str, default='/home/apletea/Downloads/index.jpeg')
+parser.add_argument('-input_img', action='store', dest='input_img', type=str, default='img/ex.jpeg')
 args = parser.parse_args()
 detector  = MTCNN()
 img = cv2.imread(args.input_img)
