@@ -1,0 +1,3 @@
+[submodule "GazeDetector"]
+	path = GazeDetector
+	url = https://github.com/apletea/GazeEstimation.git
