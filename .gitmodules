@@ -1,3 +1,6 @@
 [submodule "GazeDetector"]
 	path = GazeDetector
 	url = https://github.com/apletea/GazeEstimation.git
+[submodule "FaceSwap"]
+	path = FaceSwap
+	url = https://github.com/hrastnik/FaceSwap.git
